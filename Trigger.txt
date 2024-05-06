@@ -1,0 +1,21 @@
+create table customer1(ID int, name varchar(10), salary int);
+insert into customer1 values(1, 'AAA', 2000);
+insert into customer1 values(2, 'BBB', 3000);
+insert into customer1 values(3, 'CCC', 4000);
+select * from customer1;
+CREATE OR REPLACE TRIGGER display_salary_changes
+BEFORE DELETE OR INSERT OR UPDATE ON customer1
+FOR EACH ROW
+WHEN (NEW.ID > 0)
+DECLARE
+ sal_diff number;
+BEGIN
+ sal_diff := :NEW.salary - :OLD.salary;
+ dbms_output.put_line('Old salary: ' || :OLD.salary);
+ dbms_output.put_line('New salary: ' || :NEW.salary);
+ dbms_output.put_line('Salary difference: ' || sal_diff);
+END;
+/
+UPDATE customer1
+SET salary = salary + 500
+WHERE id = 2;
